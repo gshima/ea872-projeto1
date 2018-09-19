@@ -1,4 +1,4 @@
-//EA872 - LAB4
+//EA872 - Projeto 1
 // Mariane Tiemi Iguti (RA147279) e Gabriela Akemi Shima (RA135819)
 #ifndef OO_MODEL_HPP
 #define OO_MODEL_HPP
@@ -9,24 +9,25 @@
 
 class Corpo {
   private:
-  float massa;
   float velocidade;
-  float posicao;
-  float aceleracao; //edit: Add novo atributo
-  float forca;      //edit: Add novo atributo
-  float k;          //edit: Add novo atributo
-  float b;          //edit: Add novo atributo
+  float posicao_x;
+  float posicao_y;
 
   public:
-  Corpo(float massa, float velocidade, float aceleracao, float forca,float posicao, float k, float b);
-  void update(float nova_velocidade, float nova_posicao, float nova_aceleracao, float nova_forca);
-  float get_massa();
+  Corpo(float velocidade, float posicao_x, float posicao_y);
+  void update(float nova_velocidade, float nova_posicao_x, float nova_posicao_y);
   float get_velocidade();
-  float get_posicao();
-  float get_aceleracao(); //edit: Add metodo get para novo atributo
-  float get_forca();      //edit: Add metodo get para novo atributo
-  float get_k();          //edit: Add metodo get para novo atributo
-  float get_b();          //edit: Add metodo get para novo atributo
+  float get_posicao_x();
+  float get_posicao_y();
+};
+
+class SnakeModel : public Corpo {
+ private:
+    std::vector<Corpo*> *snake;
+
+  public:
+    SnakeModel();
+    void add_snake_corpo(Corpo *c);
 
 };
 

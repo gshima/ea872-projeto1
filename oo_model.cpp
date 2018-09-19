@@ -1,4 +1,4 @@
-//EA872 - LAB4
+//EA872 - Projeto 1
 // Mariane Tiemi Iguti (RA147279) e Gabriela Akemi Shima (RA135819)
 #include <vector>
 #include <chrono>
@@ -14,49 +14,38 @@
 #include <ncurses.h>
 using namespace std::chrono;
 
-Corpo::Corpo(float massa, float velocidade, float posicao, float aceleracao, float forca, float k, float b) {
-  this->massa = massa;
+Corpo::Corpo(float velocidade, float posicao_x, float posicao_y) {
   this->velocidade = velocidade;
-  this->posicao = posicao;
-  this->aceleracao = aceleracao; //edit: novo atributo aceleracao
-  this->forca = forca;//edit: novo atributo forca
-  this->k = k; //edit: novo atributo k: constante da mola
-  this->b = b; //edit: novo atributo b: constante de amortecimento
-
+  this->posicao_x = posicao_x;
+  this->posicao_y = posicao_y;
 }
 
-void Corpo::update(float nova_velocidade, float nova_posicao, float nova_aceleracao, float nova_forca) { //edit: Add novos parametros de aceleracao e forca
+void Corpo::update(float nova_velocidade, float nova_posicao_x, float nova_posicao_y) {
   this->velocidade = nova_velocidade;
-  this->posicao = nova_posicao;
-  this->aceleracao = nova_aceleracao; //edit: novo atributo aceleracao
-  this->forca = nova_forca; //edit: novo atributo forca
-}
-
-float Corpo::get_massa() {
-  return this->massa;
+  this->posicao_x = nova_posicao_x;
+  this->posicao_y = nova_posicao_y;
 }
 
 float Corpo::get_velocidade() {
   return this->velocidade;
 }
 
-float Corpo::get_posicao() {
-  return this->posicao;
+float Corpo::get_posicao_x() {
+  return this->posicao_x;
 }
 
-float Corpo::get_aceleracao() { //edit: Add método de get para novo parametro aceleracao
-  return this->aceleracao;
+float Corpo::get_posicao_y() {
+  return this->posicao_y;
 }
 
-float Corpo::get_forca() { //edit: Add método de get para novo parametro forca
-  return this->forca;
-}
-float Corpo::get_k() { //edit: Add método de get para novo parametro k: constante da mola
-  return this->k;
+SnakeModel::SnakeModel() {
+  this->snake = new std::vector<Corpo *>(0);
+  Corpo cabeca= corpo(10, 0, 0);
+  (this->snake)->push_back(cabeca);
 }
 
-float Corpo::get_b() { //edit: Add método de get para novo parametro b: constante de amortecimento
-  return this->b;
+void SnakeModel::add_snake_corpo(Corpo *c) {
+  (this->snake)->push_back(c);
 }
 
 ListaDeCorpos::ListaDeCorpos() {
@@ -67,19 +56,13 @@ void ListaDeCorpos::hard_copy(ListaDeCorpos *ldc) {
   std::vector<Corpo *> *corpos = ldc->get_corpos();
 
   for (int k=0; k<corpos->size(); k++) {
-    Corpo *c = new Corpo( (*corpos)[k]->get_massa(),\
-                          (*corpos)[k]->get_posicao(),\
-                          (*corpos)[k]->get_velocidade(),\
-                          (*corpos)[k]->get_aceleracao(),\
-                          (*corpos)[k]->get_forca(),\
-                          (*corpos)[k]->get_k(),\
-                          (*corpos)[k]->get_b()
+    Corpo *c = new Corpo( (*corpos)[k]->get_velocidade(),\
+                          (*corpos)[k]->get_posicao_x(),\
+                          (*corpos)[k]->get_posicao_y()
                         );
     this->add_corpo(c);
   }
-
 }
-
 
 void ListaDeCorpos::add_corpo(Corpo *c) {
   (this->corpos)->push_back(c);
