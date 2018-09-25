@@ -1,7 +1,13 @@
-//EA872 - Projeto 1
+//EA872 - LAB4
 // Mariane Tiemi Iguti (RA147279) e Gabriela Akemi Shima (RA135819)
 #ifndef OO_MODEL_HPP
 #define OO_MODEL_HPP
+
+#define SCREEN_HEIGHT 20
+#define SCREEN_WIDTH SCREEN_HEIGHT*2
+
+//#define SPACE_WIDTH 50
+//#define SPACE_HEIGHT 50
 
 #include "portaudio.h"  //edit: From MP4 playback.hpp
 #include <vector>       //edit: From MP4 playback.hpp
@@ -9,25 +15,14 @@
 
 class Corpo {
   private:
-  float velocidade;
   float posicao_x;
   float posicao_y;
 
   public:
-  Corpo(float velocidade, float posicao_x, float posicao_y);
-  void update(float nova_velocidade, float nova_posicao_x, float nova_posicao_y);
-  float get_velocidade();
+  Corpo(float posicao_x, float posicao_y);
+  void update(float nova_posicao_x, float nova_posicao_y);
   float get_posicao_x();
   float get_posicao_y();
-};
-
-class SnakeModel : public Corpo {
- private:
-    std::vector<Corpo*> *snake;
-
-  public:
-    SnakeModel();
-    void add_snake_corpo(Corpo *c);
 
 };
 

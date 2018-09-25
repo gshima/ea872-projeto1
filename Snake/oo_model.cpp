@@ -1,4 +1,4 @@
-//EA872 - Projeto 1
+//EA872 - LAB4
 // Mariane Tiemi Iguti (RA147279) e Gabriela Akemi Shima (RA135819)
 #include <vector>
 #include <chrono>
@@ -14,20 +14,14 @@
 #include <ncurses.h>
 using namespace std::chrono;
 
-Corpo::Corpo(float velocidade, float posicao_x, float posicao_y) {
-  this->velocidade = velocidade;
+Corpo::Corpo(float posicao_x, float posicao_y) {
   this->posicao_x = posicao_x;
   this->posicao_y = posicao_y;
 }
 
-void Corpo::update(float nova_velocidade, float nova_posicao_x, float nova_posicao_y) {
-  this->velocidade = nova_velocidade;
+void Corpo::update(float nova_posicao_x, float nova_posicao_y) {
   this->posicao_x = nova_posicao_x;
   this->posicao_y = nova_posicao_y;
-}
-
-float Corpo::get_velocidade() {
-  return this->velocidade;
 }
 
 float Corpo::get_posicao_x() {
@@ -38,16 +32,6 @@ float Corpo::get_posicao_y() {
   return this->posicao_y;
 }
 
-SnakeModel::SnakeModel() {
-  this->snake = new std::vector<Corpo *>(0);
-  Corpo cabeca= corpo(10, 0, 0);
-  (this->snake)->push_back(cabeca);
-}
-
-void SnakeModel::add_snake_corpo(Corpo *c) {
-  (this->snake)->push_back(c);
-}
-
 ListaDeCorpos::ListaDeCorpos() {
   this->corpos = new std::vector<Corpo *>(0);
 }
@@ -56,13 +40,14 @@ void ListaDeCorpos::hard_copy(ListaDeCorpos *ldc) {
   std::vector<Corpo *> *corpos = ldc->get_corpos();
 
   for (int k=0; k<corpos->size(); k++) {
-    Corpo *c = new Corpo( (*corpos)[k]->get_velocidade(),\
-                          (*corpos)[k]->get_posicao_x(),\
+    Corpo *c = new Corpo( (*corpos)[k]->get_posicao_x(),\
                           (*corpos)[k]->get_posicao_y()
                         );
     this->add_corpo(c);
   }
+
 }
+
 
 void ListaDeCorpos::add_corpo(Corpo *c) {
   (this->corpos)->push_back(c);
@@ -82,14 +67,14 @@ void Fisica::update(float deltaT) {
 
   for (int i = 0; i < (*c).size(); i++) {
 
-    float k_corpo = (*c)[i]->get_k(); //edit: Add constante da mola N/m
-    float b_corpo = (*c)[i]->get_b(); //edit: Add coeficiente de amortecimento
-
-    float new_aceleracao = (- b_corpo*(*c)[i]->get_velocidade() - k_corpo*(*c)[i]->get_posicao() ) / (*c)[i]->get_massa();//edit: Add Calcula aceleracao a partir do modelo a=(-b*v-k*x)/m
-    float new_vel = (*c)[i]->get_velocidade() + (float)deltaT * (new_aceleracao)/1000; //edit: Trocamos a gravidade = - 10 por aceleracao calculada
-    float new_pos = (*c)[i]->get_posicao() + (float)deltaT * new_vel/1000;
-    float new_forca = (*c)[i]->get_aceleracao() * (*c)[i]->get_massa(); //edit: Add Calcula a forca
-    (*c)[i]->update(new_vel, new_pos, new_aceleracao, new_forca); //edit: Atualiza os novos parâmetros de aceleracao e forca
+    // float k_corpo = (*c)[i]->get_k(); //edit: Add constante da mola N/m
+    // float b_corpo = (*c)[i]->get_b(); //edit: Add coeficiente de amortecimento
+    //
+    // float new_aceleracao = (- b_corpo*(*c)[i]->get_velocidade() - k_corpo*(*c)[i]->get_posicao() ) / (*c)[i]->get_massa();//edit: Add Calcula aceleracao a partir do modelo a=(-b*v-k*x)/m
+    // float new_vel = (*c)[i]->get_velocidade() + (float)deltaT * (new_aceleracao)/1000; //edit: Trocamos a gravidade = - 10 por aceleracao calculada
+    // float new_pos = (*c)[i]->get_posicao() + (float)deltaT * new_vel/1000;
+    // float new_forca = (*c)[i]->get_aceleracao() * (*c)[i]->get_massa(); //edit: Add Calcula a forca
+    // (*c)[i]->update(new_vel, new_pos, new_aceleracao, new_forca); //edit: Atualiza os novos parâmetros de aceleracao e forca
   }
 }
 
@@ -97,11 +82,11 @@ void Fisica::choque() {
   // Atualiza parametros dos corpos!
   std::vector<Corpo *> *c = this->lista->get_corpos();
   for (int i = 0; i < (*c).size(); i++) {
-    float new_vel = (*c)[i]->get_velocidade() + 15;
-    float new_pos = (*c)[i]->get_posicao();
-    float new_acel = (*c)[i]->get_aceleracao();
-    float new_forca = (*c)[i]->get_forca();
-    (*c)[i]->update(new_vel, new_pos, new_acel, new_forca);
+    // float new_vel = (*c)[i]->get_velocidade() + 15;
+    // float new_pos = (*c)[i]->get_posicao();
+    // float new_acel = (*c)[i]->get_aceleracao();
+    // float new_forca = (*c)[i]->get_forca();
+    // (*c)[i]->update(new_vel, new_pos, new_acel, new_forca);
   }
 }
 
@@ -109,11 +94,11 @@ void Fisica::choque_contrario() {
   // Atualiza parametros dos corpos!
   std::vector<Corpo *> *c = this->lista->get_corpos();
   for (int i = 0; i < (*c).size(); i++) {
-    float new_vel = (*c)[i]->get_velocidade()-15;
-    float new_pos = (*c)[i]->get_posicao();
-    float new_acel = (*c)[i]->get_aceleracao();
-    float new_forca = (*c)[i]->get_forca();
-    (*c)[i]->update(new_vel, new_pos, new_acel, new_forca);
+    // float new_vel = (*c)[i]->get_velocidade()-15;
+    // float new_pos = (*c)[i]->get_posicao();
+    // float new_acel = (*c)[i]->get_aceleracao();
+    // float new_forca = (*c)[i]->get_forca();
+    // (*c)[i]->update(new_vel, new_pos, new_acel, new_forca);
   }
 }
 
@@ -134,16 +119,18 @@ void Tela::init() {
 }
 
 void Tela::update() {
-  int i;
+  int i , j;
 
   std::vector<Corpo *> *corpos_old = this->lista_anterior->get_corpos();
 
   // Apaga corpos na tela
   for (int k=0; k<corpos_old->size(); k++)
   {
-    i = (int) ((*corpos_old)[k]->get_posicao()) * \
+    i = (int) ((*corpos_old)[k]->get_posicao_x()) * \
         (this->maxI / this->maxX);
-    if(move(i+10, k) != ERR)   /* Move cursor to position */
+    j = (int) ((*corpos_old)[k]->get_posicao_y()) * \
+        (this->maxJ / this->maxY);
+    if(move(j, i) != ERR)   /* Move cursor to position */
       echochar(' ');  /* Prints character, advances a position */
   }
 
@@ -152,16 +139,16 @@ void Tela::update() {
 
   for (int k=0; k<corpos->size(); k++)
   {
-    i = (int) ((*corpos)[k]->get_posicao()) * \
+    i = (int) ((*corpos)[k]->get_posicao_x()) * \
         (this->maxI / this->maxX);
-    if(move(i+10,k) != ERR) /* Move cursor to position */
+    j = (int) ((*corpos)[k]->get_posicao_y()) * \
+        (this->maxJ / this->maxY);
+    if(move(j, i) != ERR) /* Move cursor to position */
       echochar('*');  /* Prints character, advances a position */
 
     // Atualiza corpos antigos
-    (*corpos_old)[k]->update(  (*corpos)[k]->get_velocidade(),\
-                               (*corpos)[k]->get_posicao(),\
-                               (*corpos)[k]->get_aceleracao(),\
-                               (*corpos)[k]->get_forca()
+    (*corpos_old)[k]->update( (*corpos)[k]->get_posicao_x(),\
+                              (*corpos)[k]->get_posicao_y()
                              );
   }
 
