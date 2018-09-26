@@ -1,4 +1,4 @@
-//EA872 - LAB4
+//EA872 - Projeto 1
 // Mariane Tiemi Iguti (RA147279) e Gabriela Akemi Shima (RA135819)
 #ifndef OO_MODEL_HPP
 #define OO_MODEL_HPP
@@ -10,9 +10,23 @@
 #define SCREEN_HEIGHT 20
 #define SCREEN_WIDTH SCREEN_HEIGHT*2
 
-#define COMIDA 21
-#define SNAKE_HEAD 22
-#define SNAKE_BODY 23
+#define COMIDA      21
+#define SNAKE_HEAD  22
+#define SNAKE_BODY  23
+
+#define VELOCIDADE  20
+
+// #define TRUE      1
+// #define FALSE     0
+//
+//
+// int flag_comida = FALSE;
+// int flag_cresceu = TRUE;
+// int flag_morreu = FALSE;
+// float posicao_x_cresce = 0;
+// float posicao_y_cresce = 0;
+// float velocidade_y_cresce = 0;
+// float velocidade_x_cresce = 0;
 
 
 class Corpo {
@@ -68,6 +82,7 @@ class SnakeController {
     void andar_para_baixo();
     void andar_para_direita();
     void andar_para_esquerda();
+    void surgir_comida();
     void update(float deltaT);
 };
 

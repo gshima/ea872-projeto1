@@ -1,9 +1,11 @@
-//EA872 - LAB4
+//EA872 - Projeto 1
 // Mariane Tiemi Iguti (RA147279) e Gabriela Akemi Shima (RA135819)
 #include <iostream>
 #include <chrono>
 #include <thread>
 #include <vector>
+#include <stdlib.h>
+#include <time.h>
 
 #include "oo_model.hpp"
 
@@ -26,16 +28,20 @@ int main ()
   player->init();
 
 
-  Corpo *c1 = new Corpo(10, 0, (int)SCREEN_WIDTH/2, (int)SCREEN_HEIGHT/2 , COMIDA);
-  Corpo *c2 = new Corpo(10, 0, (int)SCREEN_WIDTH/2-10, (int)SCREEN_HEIGHT/2-10 , SNAKE_HEAD);
-  Corpo *c3 = new Corpo(10, 0, (int)SCREEN_WIDTH/2-10, (int)SCREEN_HEIGHT/2-11 , SNAKE_BODY);
+  Corpo *c1 = new Corpo(0, 0, (int)SCREEN_WIDTH/2, (int)SCREEN_HEIGHT/2 , COMIDA);
+  Corpo *c2 = new Corpo(10, 0, (int)SCREEN_WIDTH/2 + 10, (int)SCREEN_HEIGHT/2 , SNAKE_HEAD);
+  Corpo *c3 = new Corpo(10, 0, (int)SCREEN_WIDTH/2, (int)SCREEN_HEIGHT/2 , SNAKE_BODY);
+  Corpo *c4 = new Corpo(10, 0, (int)SCREEN_WIDTH/2, (int)SCREEN_HEIGHT/2 , SNAKE_BODY);
 
   ListaDeCorpos *l = new ListaDeCorpos();
   l->add_corpo(c1);
   l->add_corpo(c2);
   l->add_corpo(c3);
+  l->add_corpo(c4);
+
 
   SnakeController *f = new SnakeController(l);
+  //f->surgir_comida();
 
   Tela *tela = new Tela(l, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
   tela->init();
@@ -60,6 +66,20 @@ int main ()
 
     // Atualiza modelo
     f->update(deltaT);
+    // if(flag_morreu) {
+    //   break;
+    // }
+    // if(!flag_cresceu) {
+    //   Corpo *c5 = new Corpo(  posicao_x_cresce,
+    //                           posicao_y_cresce,
+    //                           velocidade_x_cresce,
+    //                           velocidade_y_cresce,
+    //                           SNAKE_BODY
+    //                         );
+    //   l->add_corpo(c5);
+    //   flag_cresceu = TRUE;
+    // }
+
 
     // Atualiza tela
     tela->update();

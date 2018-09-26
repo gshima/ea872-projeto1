@@ -1,4 +1,4 @@
-//EA872 - LAB4
+//EA872 - Projeto 1
 // Mariane Tiemi Iguti (RA147279) e Gabriela Akemi Shima (RA135819)
 #include <vector>
 #include <chrono>
@@ -8,6 +8,9 @@
 #include <sstream> //edit: include from playback.cpp
 #include <string> //edit: include from playback.cpp
 #include <random> //edit: include from playback.cpp
+#include <time.h>
+#include <stdlib.h>
+
 
 #include "oo_model.hpp"
 
@@ -99,59 +102,119 @@ void SnakeController::update(float deltaT) {
   // Atualiza parametros dos corpos!
   std::vector<Corpo *> *c = this->lista->get_corpos();
   float new_vel_x, new_vel_y, new_pos_x, new_pos_y;
+  float old_pos_x_head, old_pos_y_head;
+  float old_pos_x, old_pos_y;
+
   for (int i = 0; i < (*c).size(); i++) {
+
     if((*c)[i]->get_tipo() == SNAKE_HEAD) {
+
+      old_pos_x_head = (*c)[i]->get_posicao_x();
+      old_pos_y_head = (*c)[i]->get_posicao_y();
+
+      //loop que verifica se comeu ou se morreu
+      // std::vector<Corpo *> *cp = this->lista->get_corpos();
+      // for (int k = 0; k < (*cp).size(); k++) {
+      //   if((*cp)[k]->get_tipo() == COMIDA) { //ganha ponto e aumenta corpo
+      //     if ((*c)[i]->get_posicao_x() == (*cp)[k]->get_posicao_x()
+      //         && (*c)[i]->get_posicao_y() == (*cp)[k]->get_posicao_y()) {
+      //           flag_comida = TRUE;
+      //           surgir_comida();
+      //           flag_cresceu = FALSE;
+      //           posicao_x_cresce = (*c)[(*cp).size() - 1]->get_posicao_x();
+      //           posicao_y_cresce = (*c)[(*cp).size() - 1]->get_posicao_y();
+      //           velocidade_x_cresce = (*c)[(*cp).size() - 1]->get_velocidade_x();
+      //           velocidade_y_cresce = (*c)[(*cp).size() - 1]->get_velocidade_y();
+      //         }
+      //   }
+      //   else if((*cp)[k]->get_tipo() == SNAKE_BODY) { //game over
+      //     if ((*c)[i]->get_posicao_x() == (*cp)[k]->get_posicao_x()
+      //         && (*c)[i]->get_posicao_y() == (*cp)[k]->get_posicao_y()) {
+      //           flag_morreu = TRUE;
+      //           break;
+      //         }
+      //   }
+      // }
+
       new_vel_x = (*c)[i]->get_velocidade_x();
       new_vel_y = (*c)[i]->get_velocidade_y();
       new_pos_x = (*c)[i]->get_posicao_x() + (float)deltaT * new_vel_x/5000;
       new_pos_y = (*c)[i]->get_posicao_y() + (float)deltaT * new_vel_y/5000;
+      if(new_pos_x >= SCREEN_WIDTH && new_vel_x > 0)
+        new_pos_x = 0;
+      else if (new_pos_x <= 0 && new_vel_x < 0)
+        new_pos_x = SCREEN_WIDTH;
+      else if (new_pos_y >= SCREEN_HEIGHT && new_vel_y > 0)
+        new_pos_y = 0;
+      else if (new_pos_y <= 0  && new_vel_y < 0)
+        new_pos_y = SCREEN_HEIGHT;
     }
-    (*c)[i]->update(new_vel_x, new_vel_y, new_pos_x, new_pos_y); //edit: Atualiza os novos parâmetros de aceleracao e forca
+
+    else if((*c)[i]->get_tipo() == SNAKE_BODY) {
+      if( (*c)[i-1]->get_tipo() == SNAKE_HEAD) {
+        new_pos_x = old_pos_x_head;
+        new_pos_y = old_pos_y_head;
+      }
+      else {
+        new_pos_x = old_pos_x;
+        new_pos_y = old_pos_y;
+      }
+      old_pos_x = (*c)[i]->get_posicao_x();
+      old_pos_y = (*c)[i]->get_posicao_y();
+
+    }
+
   }
 }
 
 void SnakeController::andar_para_cima() {
   // Atualiza parametros dos corpos!
   std::vector<Corpo *> *c = this->lista->get_corpos();
-  float new_vel_x, new_vel_y, new_pos_x, new_pos_y;
   for (int i = 0; i < (*c).size(); i++) {
-    if((*c)[i]->get_tipo() == SNAKE_HEAD) {
-      new_vel_x = 0;
-      new_vel_y = - 20;
-      new_pos_x = (*c)[i]->get_posicao_x();
-      new_pos_y = (*c)[i]->get_posicao_y();
+    if((*c)[i]->get_velocidade_y() > 0);
+    else {
+      if((*c)[i]->get_tipo() == SNAKE_HEAD ) {
+        float new_vel_x = 0;
+        float new_vel_y = - VELOCIDADE;
+        float new_pos_x = (*c)[i]->get_posicao_x();
+        float new_pos_y = (*c)[i]->get_posicao_y();
+        (*c)[i]->update(new_vel_x, new_vel_y, new_pos_x, new_pos_y);
+      }
     }
-    (*c)[i]->update(new_vel_x, new_vel_y, new_pos_x, new_pos_y);
   }
 }
 
 void SnakeController::andar_para_baixo() {
   // Atualiza parametros dos corpos!
   std::vector<Corpo *> *c = this->lista->get_corpos();
-  float new_vel_x, new_vel_y, new_pos_x, new_pos_y;
   for (int i = 0; i < (*c).size(); i++) {
-    if((*c)[i]->get_tipo() == SNAKE_HEAD) {
-      new_vel_x = 0;
-      new_vel_y = 20;
-      new_pos_x = (*c)[i]->get_posicao_x();
-      new_pos_y = (*c)[i]->get_posicao_y();
+    if((*c)[i]->get_velocidade_y() < 0);
+    else {
+      if((*c)[i]->get_tipo() == SNAKE_HEAD ) {
+        float new_vel_x = 0;
+        float new_vel_y = VELOCIDADE;
+        float new_pos_x = (*c)[i]->get_posicao_x();
+        float new_pos_y = (*c)[i]->get_posicao_y();
+        (*c)[i]->update(new_vel_x, new_vel_y, new_pos_x, new_pos_y);
+      }
     }
-    (*c)[i]->update(new_vel_x, new_vel_y, new_pos_x, new_pos_y);
   }
 }
 
 void SnakeController::andar_para_direita() {
   // Atualiza parametros dos corpos!
   std::vector<Corpo *> *c = this->lista->get_corpos();
-  float new_vel_x, new_vel_y, new_pos_x, new_pos_y;
   for (int i = 0; i < (*c).size(); i++) {
-    if((*c)[i]->get_tipo() == SNAKE_HEAD) {
-      new_vel_x = 20;
-      new_vel_y = 0;
-      new_pos_x = (*c)[i]->get_posicao_x();
-      new_pos_y = (*c)[i]->get_posicao_y();
+    if((*c)[i]->get_velocidade_x() < 0);
+    else {
+      if((*c)[i]->get_tipo() == SNAKE_HEAD ) {
+        float new_vel_x = VELOCIDADE;
+        float new_vel_y = 0;
+        float new_pos_x = (*c)[i]->get_posicao_x();
+        float new_pos_y = (*c)[i]->get_posicao_y();
+        (*c)[i]->update(new_vel_x, new_vel_y, new_pos_x, new_pos_y);
+      }
     }
-    (*c)[i]->update(new_vel_x, new_vel_y, new_pos_x, new_pos_y);
   }
 }
 
@@ -159,17 +222,32 @@ void SnakeController::andar_para_esquerda() {
   // Atualiza parametros dos corpos!
   std::vector<Corpo *> *c = this->lista->get_corpos();
   for (int i = 0; i < (*c).size(); i++) {
-    float new_vel_x, new_vel_y, new_pos_x, new_pos_y;
-    if((*c)[i]->get_tipo() == SNAKE_HEAD) {
-      new_vel_x = - 20;
-      new_vel_y = 0;
-      new_pos_x = (*c)[i]->get_posicao_x();
-      new_pos_y = (*c)[i]->get_posicao_y();
+    if((*c)[i]->get_velocidade_x() > 0);
+    else {
+      if((*c)[i]->get_tipo() == SNAKE_HEAD) {
+        float new_vel_x = - VELOCIDADE;
+        float new_vel_y = 0;
+        float new_pos_x = (*c)[i]->get_posicao_x();
+        float new_pos_y = (*c)[i]->get_posicao_y();
+        (*c)[i]->update(new_vel_x, new_vel_y, new_pos_x, new_pos_y);
+      }
     }
-    (*c)[i]->update(new_vel_x, new_vel_y, new_pos_x, new_pos_y);
   }
 }
 
+// void SnakeController::surgir_comida() {
+//
+//   std::vector<Corpo *> *c = this->lista->get_corpos();
+//   for (int i = 0; i < (*c).size(); i++) {
+//     if((*c)[i]->get_tipo() == COMIDA && flag_comida == TRUE) {
+//       srand(time(NULL)); //inicializa random seed
+//       float new_pos_x = rand() % SCREEN_WIDTH ;
+//       float new_pos_y = rand() % SCREEN_HEIGHT;
+//       flag_comida = FALSE;
+//       (*c)[i]->update(0, 0, new_pos_x, new_pos_y);
+//     }
+//   }
+// }
 
 Tela::Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY) {
   this->lista = ldc;
@@ -197,8 +275,7 @@ void Tela::update() {
   {
     i = (int) ((*corpos_old)[k]->get_posicao_x()) * (this->maxI / this->maxX);
     j = (int) ((*corpos_old)[k]->get_posicao_y()) * (this->maxI / this->maxX);
-    if(move(j, i) != ERR)   /* Move cursor to position */
-      echochar(' ');  /* Prints character, advances a position */
+    if(move(j, i) != ERR) echochar(' ');  /* Prints character, advances a position */
   }
 
   // Desenha corpos na tela
@@ -208,8 +285,7 @@ void Tela::update() {
   {
     i = (int) ((*corpos)[k]->get_posicao_x()) * (this->maxI / this->maxX);
     j = (int) ((*corpos)[k]->get_posicao_y()) * (this->maxI / this->maxX);
-    if(move(j, i) != ERR) /* Move cursor to position */
-      echochar('*');  /* Prints character, advances a position */
+    if(move(j, i) != ERR) echochar('*');  /* Prints character, advances a position */
 
     // Atualiza corpos antigos
     (*corpos_old)[k]->update(   (*corpos)[k]->get_velocidade_x(),\
