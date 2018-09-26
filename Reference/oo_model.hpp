@@ -3,61 +3,31 @@
 #ifndef OO_MODEL_HPP
 #define OO_MODEL_HPP
 
-#define SCREEN_HEIGHT 20
-#define SCREEN_WIDTH SCREEN_HEIGHT*2
-
-#define PARA_CIMA 13
-#define PARA_BAIXO 14
-#define PARA_DIREITA 15
-#define PARA_ESQUERDA 16
-
-#define COMIDA 21
-#define SNAKE 22
-#define SNAKE_BODY 23
-
-//#define SPACE_WIDTH 50
-//#define SPACE_HEIGHT 50
-
 #include "portaudio.h"  //edit: From MP4 playback.hpp
 #include <vector>       //edit: From MP4 playback.hpp
 #include <thread>
 
 class Corpo {
-  protected:
-    float posicao_x;
-    float posicao_y;
-    int tipo;
-
-  public:
-    Corpo(float posicao_x, float posicao_y, int tipo);
-    void update_posicao(float nova_posicao_x, float nova_posicao_y);
-    float get_posicao_x();
-    float get_posicao_y();
-    int get_tipo();
-};
-
-class SnakeModel : Corpo {
   private:
-    float velocidade;
-    int direcao;
-    std::vector<Corpo*> *snake_body;
+  float massa;
+  float velocidade;
+  float posicao;
+  float aceleracao; //edit: Add novo atributo
+  float forca;      //edit: Add novo atributo
+  float k;          //edit: Add novo atributo
+  float b;          //edit: Add novo atributo
 
   public:
-    SnakeModel( float posicao_x,
-                float posicao_y,
-                int get_tipo,
-                float velocidade,
-                int direcao
-              ) ;
-    float get_posicao_x();
-    float get_posicao_y();
-    int get_tipo();
-    void add_corpo(Corpo *c);
-    int get_velocidade();
-    int get_direcao();
-    void update_velocidade(float nova_velocidade);
-    void update_direcao(int nova_direcao);
-    std::vector<Corpo*> *get_snake_body();
+  Corpo(float massa, float velocidade, float aceleracao, float forca,float posicao, float k, float b);
+  void update(float nova_velocidade, float nova_posicao, float nova_aceleracao, float nova_forca);
+  float get_massa();
+  float get_velocidade();
+  float get_posicao();
+  float get_aceleracao(); //edit: Add metodo get para novo atributo
+  float get_forca();      //edit: Add metodo get para novo atributo
+  float get_k();          //edit: Add metodo get para novo atributo
+  float get_b();          //edit: Add metodo get para novo atributo
+
 };
 
 class ListaDeCorpos {
@@ -71,21 +41,6 @@ class ListaDeCorpos {
     std::vector<Corpo*> *get_corpos();
 };
 
-class SnakeController {
-  private:
-    ListaDeCorpos *lista;
-
-  public:
-    SnakeController(ListaDeCorpos *ldc);
-    void add_corpo(Corpo *c);
-    void update(float deltaT);
-    void andar_para_direita();
-    //TODO void virar(char comando);
-    //TODO void comer();
-    //TODO void morrer();
-
-};
-
 class Fisica {
   private:
     ListaDeCorpos *lista;
@@ -96,7 +51,6 @@ class Fisica {
     void choque();
     void choque_contrario(); //edit: Adicionad
     void update(float deltaT);
-
 };
 
 class Tela {

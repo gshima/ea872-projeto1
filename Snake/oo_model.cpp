@@ -8,18 +8,21 @@
 #include <sstream> //edit: include from playback.cpp
 #include <string> //edit: include from playback.cpp
 #include <random> //edit: include from playback.cpp
+#include <typeinfo>
 
 #include "oo_model.hpp"
 
 #include <ncurses.h>
 using namespace std::chrono;
 
-Corpo::Corpo(float posicao_x, float posicao_y) {
+Corpo::Corpo(float posicao_x, float posicao_y, int tipo) {
   this->posicao_x = posicao_x;
   this->posicao_y = posicao_y;
+  this->tipo = tipo;
+
 }
 
-void Corpo::update(float nova_posicao_x, float nova_posicao_y) {
+void Corpo::update_posicao(float nova_posicao_x, float nova_posicao_y) {
   this->posicao_x = nova_posicao_x;
   this->posicao_y = nova_posicao_y;
 }
@@ -32,6 +35,130 @@ float Corpo::get_posicao_y() {
   return this->posicao_y;
 }
 
+int Corpo::get_tipo() {
+  return this->tipo;
+}
+
+SnakeModel::SnakeModel(float posicao_x, float posicao_y, int tipo, float velocidade, int direcao) :
+Corpo(posicao_x, posicao_y, tipo){
+  this->posicao_x = posicao_x;
+  this->posicao_y = posicao_y;
+  this->tipo = tipo;
+  this->velocidade = velocidade;
+  this->direcao = PARA_DIREITA;
+  this->snake_body = new std::vector<Corpo *>(0);
+  Corpo *p = new Corpo(posicao_x,posicao_y,SNAKE);
+  (this->snake_body)->push_back(p);
+  // Corpo *p1 = new Corpo(posicao_x-1,posicao_y,SNAKE_BODY);
+  // (this->snake_body)->push_back(p1);
+  // Corpo *p2 = new Corpo(posicao_x-2,posicao_y,SNAKE_BODY);
+  // (this->snake_body)->push_back(p2);
+  // Corpo *p3 = new Corpo(posicao_x-3,posicao_y,SNAKE_BODY);
+  // (this->snake_body)->push_back(p3);
+}
+
+float SnakeModel::get_posicao_x() {
+  return Corpo::get_posicao_x();
+}
+float SnakeModel::get_posicao_y(){
+  return Corpo::get_posicao_y();
+}
+int SnakeModel::get_tipo(){
+  return Corpo::get_tipo();
+}
+
+void SnakeModel::add_corpo(Corpo *c) {
+  (this->snake_body)->push_back(c);
+}
+
+std::vector<Corpo*> *SnakeModel::get_snake_body() {
+  return (this->snake_body);
+}
+
+int SnakeModel::get_velocidade(){
+    return (this->velocidade);
+}
+
+int SnakeModel::get_direcao(){
+    return (this->direcao);
+}
+SnakeController::SnakeController(ListaDeCorpos *ldc) {
+    this->lista = ldc;
+}
+void SnakeController::add_corpo(Corpo *c) {
+
+}
+void SnakeController::update(float deltaT) { // andar
+  // Atualiza parametros dos corpos!
+  std::vector<Corpo *> *corpos = this->lista->get_corpos();
+  for (int i = 0; i < (*corpos).size(); i++) {
+
+    if((*corpos)[i]->get_tipo() == SNAKE) {
+
+      float new_pos_x_cabeca = (*corpos)[i]->get_posicao_x();
+      float new_pos_y_cabeca = (*corpos)[i]->get_posicao_y();
+
+      SnakeModel *snake_cast = (SnakeModel*) (*corpos)[i];
+      std::vector<Corpo *> *corpos_snake = (snake_cast)->get_snake_body();
+
+      if((snake_cast)->get_direcao() == PARA_DIREITA) {
+        if(move(-35, -65 ) != ERR) echochar('&');
+        int lala = (snake_cast)->get_posicao_x();
+        std::cout<< lala <<std::endl;
+        new_pos_x_cabeca = (snake_cast)->get_posicao_x() + (snake_cast)->get_velocidade()*deltaT/1000;
+        if(new_pos_x_cabeca > SCREEN_WIDTH ) new_pos_x_cabeca = (int)new_pos_x_cabeca % SCREEN_WIDTH;
+      }
+
+      // else if((snake_cast)->get_direcao() == PARA_ESQUERDA) {
+      //   new_pos_x_cabeca = (snake_cast)->get_posicao_x() - (snake_cast)->get_velocidade()*deltaT;
+      //   if(new_pos_x_cabeca < 0 ) new_pos_x_cabeca = SCREEN_WIDTH + new_pos_x_cabeca;
+      // }
+      //
+      // else if((snake_cast)->get_direcao() == PARA_CIMA) {
+      //   new_pos_y_cabeca = (snake_cast)->get_posicao_y() - (snake_cast)->get_velocidade()*deltaT;
+      //   if(new_pos_y_cabeca > SCREEN_HEIGHT) new_pos_y_cabeca = (int)new_pos_y_cabeca % SCREEN_HEIGHT;
+      // }
+      //
+      // else if((snake_cast)->get_direcao() == PARA_BAIXO) {
+      //   new_pos_y_cabeca = (snake_cast)->get_posicao_y() + (snake_cast)->get_velocidade()*deltaT;
+      //   if(new_pos_y_cabeca < 0 ) new_pos_y_cabeca = SCREEN_HEIGHT+ new_pos_y_cabeca;
+      // }
+
+      (*corpos)[i]->update_posicao(new_pos_x_cabeca, new_pos_y_cabeca);
+
+
+      // for(int l=1; l < corpos_snake->size(); l++){
+      //   float new_pos_x =
+      //   float new_pos_y =
+      //
+      // }
+    }
+    // if else ((*corpos)[i]->get_tipo() == SNAKE) {
+    // }
+
+  }
+}
+//void SnakeController::andar_para_direita(float deltaT);
+
+// void SnakeController::andar(float deltaT) {
+//   int delta_posicao = (this->velocidade)*deltaT;
+//   if(this->direcao == PARA_DIREITA ) {
+//     this->posicao_x = this->posicao_x + delta_posicao;
+//     // for( l = 0 ; ) {
+//     //
+//     // }
+//
+//   }
+
+//}
+void SnakeModel::update_velocidade(float nova_velocidade) {
+  this->velocidade = nova_velocidade;
+}
+
+void SnakeModel::update_direcao(int nova_direcao) {
+  this->direcao = nova_direcao;
+}
+
 ListaDeCorpos::ListaDeCorpos() {
   this->corpos = new std::vector<Corpo *>(0);
 }
@@ -41,8 +168,33 @@ void ListaDeCorpos::hard_copy(ListaDeCorpos *ldc) {
 
   for (int k=0; k<corpos->size(); k++) {
     Corpo *c = new Corpo( (*corpos)[k]->get_posicao_x(),\
-                          (*corpos)[k]->get_posicao_y()
+                          (*corpos)[k]->get_posicao_y(),
+                          (*corpos)[k]->get_tipo()
                         );
+    if( (*corpos)[k]->get_tipo() == SNAKE) {
+       SnakeModel *snake_cast = (SnakeModel*) (*corpos)[k];
+       // if(move(-35, -65 ) != ERR) echochar('&');
+       // int lala = (snake_cast)->get_posicao_x();
+       // std::cout<< lala <<std::endl;
+      SnakeModel *snake_copy = new SnakeModel(  (snake_cast)->get_posicao_x(),\
+                                                (snake_cast)->get_posicao_y(),\
+                                                (snake_cast)->get_tipo(),\
+                                                (snake_cast)->get_velocidade(),\
+                                                (snake_cast)->get_direcao()
+                                              );
+      std::vector<Corpo *> *corpos_snake = (snake_cast)->get_snake_body();
+
+      for(int l=0; l<corpos_snake->size();l++) {
+        Corpo *d = new Corpo( (*corpos_snake)[l]->get_posicao_x(),\
+                              (*corpos_snake)[l]->get_posicao_y(),\
+                              (*corpos_snake)[l]->get_tipo()\
+                            );
+        snake_copy->add_corpo(d);
+      }
+      this->add_corpo( (Corpo*) snake_copy );
+      c = (Corpo*) snake_copy;
+    }
+
     this->add_corpo(c);
   }
 
@@ -126,12 +278,24 @@ void Tela::update() {
   // Apaga corpos na tela
   for (int k=0; k<corpos_old->size(); k++)
   {
-    i = (int) ((*corpos_old)[k]->get_posicao_x()) * \
-        (this->maxI / this->maxX);
-    j = (int) ((*corpos_old)[k]->get_posicao_y()) * \
-        (this->maxJ / this->maxY);
-    if(move(j, i) != ERR)   /* Move cursor to position */
-      echochar(' ');  /* Prints character, advances a position */
+    i = (int) ((*corpos_old)[k]->get_posicao_x()) * (this->maxI / this->maxX);
+    j = (int) ((*corpos_old)[k]->get_posicao_y()) * (this->maxJ / this->maxY);
+    //if(move(j, i) != ERR) echochar(' ');
+
+    if(move(j, i) != ERR) {
+      if((*corpos_old)[k]->get_tipo() == SNAKE) {
+        SnakeModel *snake_cast = (SnakeModel*) (*corpos_old)[k];
+        std::vector<Corpo *> *corpos_snake = (snake_cast)->get_snake_body();
+        //int lala = (snake_cast)->get_direcao();
+        //std::cout<< lala <<std::endl;
+        for(int l=0; l < corpos_snake->size(); l++){
+          i = (int) ((*corpos_snake)[l]->get_posicao_x()) * (this->maxI / this->maxX);
+          j = (int) ((*corpos_snake)[l]->get_posicao_y()) * (this->maxJ / this->maxY);
+          if(move(j, i) != ERR) echochar(' '); //imprime cobra
+        }
+      }
+      else echochar(' ');  // imprime comida
+    }
   }
 
   // Desenha corpos na tela
@@ -139,17 +303,29 @@ void Tela::update() {
 
   for (int k=0; k<corpos->size(); k++)
   {
-    i = (int) ((*corpos)[k]->get_posicao_x()) * \
-        (this->maxI / this->maxX);
-    j = (int) ((*corpos)[k]->get_posicao_y()) * \
-        (this->maxJ / this->maxY);
-    if(move(j, i) != ERR) /* Move cursor to position */
-      echochar('*');  /* Prints character, advances a position */
+    i = (int) ((*corpos)[k]->get_posicao_x()) * (this->maxI / this->maxX);
+    j = (int) ((*corpos)[k]->get_posicao_y()) * (this->maxJ / this->maxY);
+    if(move(j, i) != ERR) {
+      if((*corpos)[k]->get_tipo() == SNAKE) {
+        SnakeModel *snake_cast = (SnakeModel*) (*corpos)[k];
+        std::vector<Corpo *> *corpos_snake = (snake_cast)->get_snake_body();
+        //int lala = (snake_cast)->get_direcao();
+        //std::cout<< lala <<std::endl;
+        for(int l=0; l < corpos_snake->size(); l++){
+          i = (int) ((*corpos_snake)[l]->get_posicao_x()) * (this->maxI / this->maxX);
+          j = (int) ((*corpos_snake)[l]->get_posicao_y()) * (this->maxJ / this->maxY);
+          if(move(j, i) != ERR)
+            echochar('@'); //imprime cobra
+        }
+      }
+      else echochar('*');  // imprime comida
+    } /* Move cursor to position */
+
 
     // Atualiza corpos antigos
-    (*corpos_old)[k]->update( (*corpos)[k]->get_posicao_x(),\
-                              (*corpos)[k]->get_posicao_y()
-                             );
+    (*corpos_old)[k]->update_posicao( (*corpos)[k]->get_posicao_x(),\
+                                      (*corpos)[k]->get_posicao_y()
+                                    );
   }
 
   // Atualiza tela
