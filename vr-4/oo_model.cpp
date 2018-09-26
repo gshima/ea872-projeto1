@@ -10,10 +10,11 @@
 #include <random> //edit: include from playback.cpp
 #include <time.h>
 #include <stdlib.h>
-
+#include <ncurses.h>
 #include "oo_model.hpp"
 
-#include <ncurses.h>
+int flag_comeu = FALSE;
+
 using namespace std::chrono;
 
 Corpo::Corpo( float velocidade_x,
@@ -105,19 +106,43 @@ void SnakeController::update(float deltaT) {
 
   for (int i = 0; i < (*c).size(); i++) {
 
+    //trata atualizacao da posicao da cabeça
     if((*c)[i]->get_tipo() == SNAKE_HEAD) {
+
       old_pos_x = (*c)[i]->get_posicao_x();
       old_pos_y = (*c)[i]->get_posicao_y();
       old_vel_x = (*c)[i]->get_velocidade_x();
       old_vel_y = (*c)[i]->get_velocidade_y();
 
-      // old_pos_x_head = (*c)[i]->get_posicao_x();
-      // old_pos_y_head = (*c)[i]->get_posicao_y();
-
       new_vel_x = (*c)[i]->get_velocidade_x();
       new_vel_y = (*c)[i]->get_velocidade_y();
       new_pos_x = (*c)[i]->get_posicao_x() + (float)deltaT * new_vel_x/5000;
       new_pos_y = (*c)[i]->get_posicao_y() + (float)deltaT * new_vel_y/5000;
+
+
+      //Verifica se comeu a COMIDA
+      std::vector<Corpo *> *cp = this->lista->get_corpos();
+      for (int k = 0; k < (*cp).size(); k++) {
+        int i_comida,j_comida, i_head, j_head;
+
+        if((*c)[k]->get_tipo() == COMIDA){
+          i_comida = (int)((*c)[0]->get_posicao_x());
+          j_comida = (int)((*c)[0]->get_posicao_y());
+          i_head = (int)(new_pos_x);
+          j_head = (int)(new_pos_y);
+          if( i_comida == i_head && j_comida == j_head){
+              flag_comeu = TRUE;
+              //Escreve a comida em outra posicao
+              srand(time(NULL)); //inicializa random seed
+              float new_pos_x = rand() % SCREEN_WIDTH ;
+              float new_pos_y = rand() % SCREEN_HEIGHT;
+              (*c)[i]->update(0, 0, new_pos_x, new_pos_y);
+              flag_comeu = FALSE;
+
+              //Adiciona novo corpo à lista de corpos(cobra)
+          }
+        }
+      }
 
       //Essa parte trata as bordas da tela
       if(new_pos_x >= SCREEN_WIDTH && new_vel_x > 0)
@@ -133,6 +158,7 @@ void SnakeController::update(float deltaT) {
     }
 
     //trata atualizacao da posicao do body
+
     else if((*c)[i]->get_tipo() == SNAKE_BODY) {
       if( (*c)[i]->get_velocidade_x() > 0 ) {
         new_pos_x = old_pos_x - 0.3;
@@ -158,6 +184,11 @@ void SnakeController::update(float deltaT) {
         new_vel_x = old_vel_x;
         new_vel_y = old_vel_y;
       }
+
+      // new_pos_x = old_pos_x;
+      // new_pos_y = old_pos_y;
+      // new_vel_x = old_vel_x;
+      // new_vel_y = old_vel_y;
 
       old_pos_x = (*c)[i]->get_posicao_x();
       old_pos_y = (*c)[i]->get_posicao_y();

@@ -67,6 +67,21 @@ int main ()
     // Atualiza modelo
     f->update(deltaT);
 
+    //surge COMIDA
+    // if( c1->get_posicao_x() == c2->get_posicao_x() &&
+    //     c2->get_posicao_x() == c2->get_posicao_x()
+    //   ){
+    //     srand(time(NULL)); //inicializa random seed
+    //     float new_pos_x_comida = rand() % SCREEN_WIDTH ;
+    //     float new_pos_y_comida = rand() % SCREEN_HEIGHT;
+    //     c1->update(0, 0, new_pos_x_comida, new_pos_y_comida);
+    // }
+
+    // srand(time(NULL)); //inicializa random seed
+    // float new_pos_x_comida = rand() % SCREEN_WIDTH ;
+    // float new_pos_y_comida = rand() % SCREEN_HEIGHT;
+    // c1->update(0, 0, new_pos_x_comida, new_pos_y_comida);
+
     // Atualiza tela
     tela->update();
 
