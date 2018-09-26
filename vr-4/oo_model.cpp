@@ -134,18 +134,31 @@ void SnakeController::update(float deltaT) {
 
     //trata atualizacao da posicao do body
     else if((*c)[i]->get_tipo() == SNAKE_BODY) {
-      new_pos_x = old_pos_x;
-      new_pos_y = old_pos_y;
-      new_vel_x = old_vel_x;
-      new_vel_y = old_vel_y;
-      // if( (*c)[i-1]->get_tipo() == SNAKE_HEAD) {
-      //   new_pos_x = old_pos_x_head;
-      //   new_pos_y = old_pos_y_head;
-      // }
-      // else {
-      //   new_pos_x = old_pos_x;
-      //   new_pos_y = old_pos_y;
-      // }
+      if( (*c)[i]->get_velocidade_x() > 0 ) {
+        new_pos_x = old_pos_x - 0.3;
+        new_pos_y = old_pos_y;
+        new_vel_x = old_vel_x;
+        new_vel_y = old_vel_y;
+      }
+      else if( (*c)[i]->get_velocidade_x() < 0 ) {
+        new_pos_x = old_pos_x + 0.3;
+        new_pos_y = old_pos_y;
+        new_vel_x = old_vel_x;
+        new_vel_y = old_vel_y;
+      }
+      else if( (*c)[i]->get_velocidade_y() > 0 ) {
+        new_pos_x = old_pos_x;
+        new_pos_y = old_pos_y - 0.3;
+        new_vel_x = old_vel_x;
+        new_vel_y = old_vel_y;
+      }
+      else if( (*c)[i]->get_velocidade_y() < 0 ) {
+        new_pos_x = old_pos_x;
+        new_pos_y = old_pos_y + 0.3;
+        new_vel_x = old_vel_x;
+        new_vel_y = old_vel_y;
+      }
+
       old_pos_x = (*c)[i]->get_posicao_x();
       old_pos_y = (*c)[i]->get_posicao_y();
       old_vel_x = (*c)[i]->get_velocidade_x();
