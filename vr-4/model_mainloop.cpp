@@ -25,38 +25,27 @@ int main ()
   player = new Audio::Player();
   player->init();
 
-  //inicializa comida no centro da tela
-  int centro_x = (int) SCREEN_WIDTH/2;
-  int centro_y = (int) SCREEN_HEIGHT/2;
-  Corpo *comida = new Corpo(centro_x,centro_y - 2, COMIDA); //Corpo(float posicao_x, float posicao_y)
-  SnakeModel *snake = new SnakeModel(centro_x - 10,centro_y, SNAKE,100, PARA_DIREITA);
 
-  //Medição de tela
-  Corpo *comida1 = new Corpo(0,0, COMIDA);
-  Corpo *comida2 = new Corpo(SCREEN_WIDTH,0,COMIDA);
-  Corpo *comida3 = new Corpo(0,SCREEN_HEIGHT,COMIDA);
-  Corpo *comida4 = new Corpo(SCREEN_WIDTH,SCREEN_HEIGHT,COMIDA);
+  Corpo *c1 = new Corpo(0, 0, (int)SCREEN_WIDTH/2, (int)SCREEN_HEIGHT/2 , COMIDA);
+  Corpo *c2 = new Corpo(10, 0, (int)SCREEN_WIDTH/2, (int)SCREEN_HEIGHT/2 , SNAKE_HEAD);
+  Corpo *c3 = new Corpo(10, 0, ((int)SCREEN_WIDTH/2)-2, (int)SCREEN_HEIGHT/2 , SNAKE_BODY);
+  Corpo *c4 = new Corpo(10, 0, ((int)SCREEN_WIDTH/2)-4, (int)SCREEN_HEIGHT/2 , SNAKE_BODY);
+  Corpo *c5 = new Corpo(10, 0, ((int)SCREEN_WIDTH/2)-6, (int)SCREEN_HEIGHT/2 , SNAKE_BODY);
 
 
   ListaDeCorpos *l = new ListaDeCorpos();
-  l->add_corpo(comida);
-  l->add_corpo(comida1);
-  l->add_corpo(comida2);
-  l->add_corpo(comida3);
-  l->add_corpo(comida4);
-  l->add_corpo((Corpo*)snake);
+  l->add_corpo(c1);
+  l->add_corpo(c2);
+  l->add_corpo(c3);
+  l->add_corpo(c4);
+  l->add_corpo(c5);
 
 
-  //inicializa SnakeController()
-  Fisica *f = new Fisica(l);
-  SnakeController *s = new SnakeController(l);
+  SnakeController *f = new SnakeController(l);
 
-  //inicializa tela
-  // Tela::Tela(ListaDeCorpos *ldc, int maxI, int maxJ, float maxX, float maxY)
-  Tela *tela = new Tela(l, SCREEN_WIDTH , SCREEN_HEIGHT , SCREEN_WIDTH, SCREEN_HEIGHT);
+  Tela *tela = new Tela(l, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
   tela->init();
 
-  //incializa teclado
   Teclado *teclado = new Teclado();
   teclado->init();
 
@@ -69,7 +58,6 @@ int main ()
 
   T = get_now_ms();
   t1 = T;
-
   while (1) {
     // Atualiza timers
     t0 = t1;
@@ -78,30 +66,42 @@ int main ()
 
     // Atualiza modelo
     f->update(deltaT);
-    s->update(deltaT);
 
     // Atualiza tela
     tela->update();
 
     // Lê o teclado
     char c = teclado->getchar();
+    if (c=='w') {
+      f->andar_para_cima();
+      player->play(asample);
+      asample->set_position(0);
+    }
+
     if (c=='s') {
-      f->choque();
-
+      f->andar_para_baixo();
       player->play(asample);
       asample->set_position(0);
-      //player->stop();
     }
-    if (c=='w') { //edit: adicionado outro comando
-      f->choque_contrario();
 
+    if (c=='d') {
+      f->andar_para_direita();
       player->play(asample);
       asample->set_position(0);
-      //player->stop();
     }
+
+    if (c=='a') {
+      f->andar_para_esquerda();
+      player->play(asample);
+      asample->set_position(0);
+    }
+
     if (c=='q') {
       break;
     }
+
+    // Condicao de parada
+    //if ( (t1-T) > 10000 ) break;
 
     std::this_thread::sleep_for (std::chrono::milliseconds(100));
     i++;

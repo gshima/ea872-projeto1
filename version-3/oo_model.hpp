@@ -1,63 +1,62 @@
-//EA872 - LAB4
+//EA872 - Projeto 1
 // Mariane Tiemi Iguti (RA147279) e Gabriela Akemi Shima (RA135819)
 #ifndef OO_MODEL_HPP
 #define OO_MODEL_HPP
-
-#define SCREEN_HEIGHT 20
-#define SCREEN_WIDTH SCREEN_HEIGHT*2
-
-#define PARA_CIMA 13
-#define PARA_BAIXO 14
-#define PARA_DIREITA 15
-#define PARA_ESQUERDA 16
-
-#define COMIDA 21
-#define SNAKE 22
-#define SNAKE_BODY 23
-
-//#define SPACE_WIDTH 50
-//#define SPACE_HEIGHT 50
 
 #include "portaudio.h"  //edit: From MP4 playback.hpp
 #include <vector>       //edit: From MP4 playback.hpp
 #include <thread>
 
+#define SCREEN_HEIGHT 20
+#define SCREEN_WIDTH SCREEN_HEIGHT*2
+
+#define COMIDA      21
+#define SNAKE_HEAD  22
+#define SNAKE_BODY  23
+
+#define VELOCIDADE  20
+
+// #define TRUE      1
+// #define FALSE     0
+//
+//
+// int flag_comida = FALSE;
+// int flag_cresceu = TRUE;
+// int flag_morreu = FALSE;
+// float posicao_x_cresce = 0;
+// float posicao_y_cresce = 0;
+// float velocidade_y_cresce = 0;
+// float velocidade_x_cresce = 0;
+
+
 class Corpo {
-  protected:
-    float posicao_x;
-    float posicao_y;
-    int tipo;
-
-  public:
-    Corpo(float posicao_x, float posicao_y, int tipo);
-    void update_posicao(float nova_posicao_x, float nova_posicao_y);
-    float get_posicao_x();
-    float get_posicao_y();
-    int get_tipo();
-};
-
-class SnakeModel : Corpo {
   private:
-    float velocidade;
-    int direcao;
-    std::vector<Corpo*> *snake_body;
+  float velocidade_x;
+  float velocidade_y;
+  float posicao_x;
+  float posicao_y;
+  int tipo;
 
   public:
-    SnakeModel( float posicao_x,
-                float posicao_y,
-                int get_tipo,
-                float velocidade,
-                int direcao
-              ) ;
-    float get_posicao_x();
-    float get_posicao_y();
-    int get_tipo();
-    void add_corpo(Corpo *c);
-    int get_velocidade();
-    int get_direcao();
-    void update_velocidade(float nova_velocidade);
-    void update_direcao(int nova_direcao);
-    std::vector<Corpo*> *get_snake_body();
+  Corpo(  float velocidade_x,
+          float velocidade_y,
+          float posicao_x,
+          float posicao_y,
+          int tipo
+        );
+
+  void update(  float nova_velocidade_x,
+                float nova_velocidade_y ,
+                float nova_posicao_x,
+                float nova_posicao_y
+              );
+
+  float get_velocidade_x();
+  float get_velocidade_y();
+  float get_posicao_x();
+  float get_posicao_y();
+  int get_tipo();
+
 };
 
 class ListaDeCorpos {
@@ -78,25 +77,13 @@ class SnakeController {
   public:
     SnakeController(ListaDeCorpos *ldc);
     void add_corpo(Corpo *c);
-    void update(float deltaT);
-    void andar_para_direita();
-    //TODO void virar(char comando);
-    //TODO void comer();
-    //TODO void morrer();
-
-};
-
-class Fisica {
-  private:
-    ListaDeCorpos *lista;
-
-  public:
-    Fisica(ListaDeCorpos *ldc);
-    void add_corpo(Corpo *c);
     void choque();
-    void choque_contrario(); //edit: Adicionad
+    void andar_para_cima();
+    void andar_para_baixo();
+    void andar_para_direita();
+    void andar_para_esquerda();
+    void surgir_comida();
     void update(float deltaT);
-
 };
 
 class Tela {
