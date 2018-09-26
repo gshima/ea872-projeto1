@@ -13,7 +13,7 @@
 #include <ncurses.h>
 #include "oo_model.hpp"
 
-int flag_comeu = FALSE;
+int flag_cresceu = FALSE;
 
 using namespace std::chrono;
 
@@ -97,6 +97,9 @@ SnakeController::SnakeController(ListaDeCorpos *ldc) {
   this->lista = ldc;
 }
 
+void SnakeController::add_corpo(Corpo *c){
+  (this->lista)->add_corpo(c);
+}
 void SnakeController::update(float deltaT) {
   // Atualiza parametros dos corpos!
   std::vector<Corpo *> *c = this->lista->get_corpos();
@@ -119,30 +122,58 @@ void SnakeController::update(float deltaT) {
       new_pos_x = (*c)[i]->get_posicao_x() + (float)deltaT * new_vel_x/5000;
       new_pos_y = (*c)[i]->get_posicao_y() + (float)deltaT * new_vel_y/5000;
 
-
       //Verifica se comeu a COMIDA
-      std::vector<Corpo *> *cp = this->lista->get_corpos();
-      for (int k = 0; k < (*cp).size(); k++) {
-        int i_comida,j_comida, i_head, j_head;
 
-        if((*c)[k]->get_tipo() == COMIDA){
-          i_comida = (int)((*c)[0]->get_posicao_x());
-          j_comida = (int)((*c)[0]->get_posicao_y());
-          i_head = (int)(new_pos_x);
-          j_head = (int)(new_pos_y);
-          if( i_comida == i_head && j_comida == j_head){
-              flag_comeu = TRUE;
-              //Escreve a comida em outra posicao
-              srand(time(NULL)); //inicializa random seed
-              float new_pos_x = rand() % SCREEN_WIDTH ;
-              float new_pos_y = rand() % SCREEN_HEIGHT;
-              (*c)[i]->update(0, 0, new_pos_x, new_pos_y);
-              flag_comeu = FALSE;
+      int i_comida = (int)((*c)[0]->get_posicao_x());
+      //std::cout << i_comida <<std::endl;
+      int j_comida = (int)((*c)[0]->get_posicao_y());
+      //std::cout << j_comida <<std::endl;
+      int i_head = (int)(new_pos_x);
+      //std::cout << i_head <<std::endl;
+      int j_head = (int)(new_pos_y);
+      //std::cout << j_head<<std::endl;
 
-              //Adiciona novo corpo à lista de corpos(cobra)
-          }
-        }
+       if( i_comida == i_head && j_comida == j_head){
+          //Escreve a comida em outra posicao
+          srand(time(NULL)); //inicializa random seed
+          float new_pos_x1 = rand() % SCREEN_WIDTH ;
+          float new_pos_y1 = rand() % SCREEN_HEIGHT;
+          (*c)[0]->update(0,0,new_pos_x1,new_pos_y1);
+          //Adiciona novo corpo à lista de corpos(cobra)
+          flag_cresceu = TRUE;
+          // Corpo *cp = new Corpo ( (*c)[(*c).size() - 1]->get_velocidade_x(),\
+          //                         (*c)[(*c).size() - 1]->get_velocidade_y(),\
+          //                         (*c)[(*c).size() - 1]->get_posicao_x(),\
+          //                         (*c)[(*c).size() - 1]->get_posicao_y(),
+          //                         SNAKE_BODY
+          //                       );
+          // this->lista->add_corpo(cp);
       }
+
+      // //Verifica se morreu/comeu
+      // std::vector<Corpo *> *cp = this->lista->get_corpos();
+      // for (int k = 0; k < (*cp).size(); k++) {
+      //
+      //
+      //   if((*c)[k]->get_tipo() == COMIDA){
+      //     int i_comida,j_comida, i_head, j_head;
+      //     i_comida = (int)((*c)[0]->get_posicao_x());
+      //     j_comida = (int)((*c)[0]->get_posicao_y());
+      //     i_head = (int)(new_pos_x);
+      //     j_head = (int)(new_pos_y);
+      //     if( i_comida == i_head && j_comida == j_head){
+      //         flag_comeu = TRUE;
+      //         //Escreve a comida em outra posicao
+      //         srand(time(NULL)); //inicializa random seed
+      //         float new_pos_x = rand() % SCREEN_WIDTH ;
+      //         float new_pos_y = rand() % SCREEN_HEIGHT;
+      //         (*c)[i]->update(0, 0, new_pos_x, new_pos_y);
+      //         flag_comeu = FALSE;
+      //
+      //         //Adiciona novo corpo à lista de corpos(cobra)
+      //     }
+      //   }
+      // }
 
       //Essa parte trata as bordas da tela
       if(new_pos_x >= SCREEN_WIDTH && new_vel_x > 0)
@@ -304,7 +335,15 @@ void Tela::update() {
   {
     i = (int) ((*corpos)[k]->get_posicao_x()) * (this->maxI / this->maxX);
     j = (int) ((*corpos)[k]->get_posicao_y()) * (this->maxI / this->maxX);
-    if(move(j, i) != ERR) echochar('*');  /* Prints character, advances a position */
+    //if(move(j, i) != ERR) echochar('@');
+
+    if((*corpos)[k]->get_tipo() == COMIDA) {
+      if(move(j, i) != ERR) echochar('*');  /* Prints character, advances a position */
+    }
+    else {
+      if(move(j, i) != ERR) echochar('@');  /* Prints character, advances a position */
+    }
+
 
     // Atualiza corpos antigos
     (*corpos_old)[k]->update(   (*corpos)[k]->get_velocidade_x(),\

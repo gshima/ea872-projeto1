@@ -19,7 +19,7 @@
 #define FALSE 0
 #define TRUE  1
 
-extern int flag_comeu;
+//extern int flag_cresceu;
 
 class Corpo {
   private:

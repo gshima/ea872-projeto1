@@ -7,6 +7,8 @@
 
 #include "oo_model.hpp"
 
+extern int flag_cresceu;
+
 using namespace std::chrono;
 uint64_t get_now_ms() {
   return duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count();
@@ -66,15 +68,16 @@ int main ()
 
     // Atualiza modelo
     f->update(deltaT);
-
-    //surge COMIDA
-    // if( c1->get_posicao_x() == c2->get_posicao_x() &&
-    //     c2->get_posicao_x() == c2->get_posicao_x()
-    //   ){
-    //     srand(time(NULL)); //inicializa random seed
-    //     float new_pos_x_comida = rand() % SCREEN_WIDTH ;
-    //     float new_pos_y_comida = rand() % SCREEN_HEIGHT;
-    //     c1->update(0, 0, new_pos_x_comida, new_pos_y_comida);
+    // if(flag_cresceu){
+    //   std::vector<Corpo *> *c = l->get_corpos();
+    //   Corpo *cp = new Corpo ( (*c)[(*c).size() - 1]->get_velocidade_x(),\
+    //                           (*c)[(*c).size() - 1]->get_velocidade_y(),\
+    //                           (*c)[(*c).size() - 1]->get_posicao_x(),\
+    //                           (*c)[(*c).size() - 1]->get_posicao_y(),
+    //                           SNAKE_BODY
+    //                         );
+    //   l->add_corpo(cp);
+    //   flag_cresceu = FALSE;
     // }
 
     // srand(time(NULL)); //inicializa random seed
